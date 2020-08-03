@@ -1,0 +1,6 @@
+Configuración recomendada para la impresión 3D
+
+- Altura de capa: 0.3 mm
+- Velocidad: 60 mm/s
+- Temperatura PLA: 210 grados
+- Temperatura de la cama: 60 grados
