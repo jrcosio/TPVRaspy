@@ -1,7 +1,7 @@
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
-from datetime import date
+from datetime import datetime
 
 NombreApp     = "TPVRaspy"
 Version       = "0.1 Alpha"
@@ -16,11 +16,13 @@ class Aplicacion(Frame):
     def __init__(self, principal=None):
         super().__init__(principal)
         #--------Actualizamos la fecha ----
-        self.Fecha=date.today() 
+        self.Fecha=datetime.now()
+
         #---- Creamos la ventana principal
         self.Ventanaprincipal = principal
         self.Ventanaprincipal.title("{} {}".format(NombreApp,Version))
         #self.Ventanaprincipal.resizable(False, False)
+        self.Ventanaprincipal.protocol("WM_DELETE_WINDOW", self.Salir) #Controlamos el evento cerrar la ventana principal y lo mandamos al metodo Salir()
         
         #---- Creamos el menú ----
         self.BarraMenu = Menu(self.Ventanaprincipal)
@@ -35,12 +37,12 @@ class Aplicacion(Frame):
         self.frBarraOpcionesTicket.pack(fill="x")
 
         #---- Marco ventas y botones del ticket
-        self.frZonaVentas=LabelFrame(self.frameprincipal,text="Venta")
+        self.frZonaVentas=Frame(self.frameprincipal)
         self.frZonaVentas.pack()#fill="x",padx=5,pady=5)
 
         #---- Marco de Artículos ----
         self.frArticulos=Frame(self.frameprincipal)
-        self.frArticulos.pack()
+        self.frArticulos.pack(padx=3,pady=10)
 
         self.CargarImagenes()
         self.crear_Widgets()
@@ -61,60 +63,61 @@ class Aplicacion(Frame):
         
         #---- Añadirmo a la barra del ticket el Label Fecha y botones del ticket ---
         Label(self.frBarraOpcionesTicket,text="{}/{}/{}".format(self.Fecha.day,self.Fecha.month,self.Fecha.year),font=("",24),bg="#333333",fg="white").pack(side="left",padx=2)
-        Button(self.frBarraOpcionesTicket,image=self.Iconos[1],width=66, height=66).pack(side="right",padx=1,pady=1)
+        for i in range(12):
+            Button(self.frBarraOpcionesTicket,image=self.Iconos[1],width=34, height=34).pack(side="left",padx=2,pady=0)
+        Button(self.frBarraOpcionesTicket,image=self.Iconos[1],width=34, height=34).pack(side="right",padx=2,pady=0)
         
         #----- Datagrid -----
-        datagrid=ttk.Treeview(self.frZonaVentas, columns=(1,2),show="headings", height="10")
-        datagrid.grid(row=0,column=0,padx=5,pady=5,sticky="n")
+        self.datagrid=ttk.Treeview(self.frZonaVentas, columns=(1,2),show="headings", height="7")
+        self.datagrid.grid(row=0,column=0,padx=2,pady=5,sticky="n")
 
-        datagrid.column(1, width = 445, anchor = "w")
-        datagrid.column(2, width = 60, anchor = "e")
+        self.datagrid.column(1, width = 425, anchor = "w")
+        self.datagrid.column(2, width = 60, anchor = "e")
 
-        datagrid.heading(1, text="Artículo")
-        datagrid.heading(2, text="Importe")
+        self.datagrid.heading(1, text="Artículo")
+        self.datagrid.heading(2, text="Importe")
         
-        #---- Botones DataGrid ----
+        #---- Botones de DataGrid ----
         self.frBtnDataGrid=Frame(self.frZonaVentas)
         self.frBtnDataGrid.grid(row=0,column=0,sticky="sw")
-        Button(self.frBtnDataGrid,text="Config",image=self.Iconos[11],width=66, height=66).grid(row=0,column=0)
-        Button(self.frBtnDataGrid,text="Config",image=self.Iconos[9],width=66, height=66).grid(row=0,column=1)
-        Button(self.frBtnDataGrid,text="Config",image=self.Iconos[8],width=66, height=66).grid(row=0,column=2)
-        Button(self.frBtnDataGrid,text="Config",image=self.Iconos[7],width=66, height=66).grid(row=0,column=3)
-        Button(self.frBtnDataGrid,text="Config",image=self.Iconos[6],width=66, height=66).grid(row=0,column=4)
-        Button(self.frBtnDataGrid,text="Config",image=self.Iconos[5],width=66, height=66).grid(row=0,column=5)
-        Label(self.frZonaVentas,text="TOTAL: {} €".format(1000)).grid(row=1,column=0,columnspan=2,sticky="e")
+        Label(self.frBtnDataGrid,text="TOTAL: {} €".format(1000),font=("",20)).grid(row=0,column=0,columnspan=7,sticky="e")
 
-        #---- Botones ----
-
-        self.MarcoBotones=Frame(self.frZonaVentas)
-        self.MarcoBotones.grid(row=0,column=2, padx=5, sticky="ne")
-
-        Button(self.MarcoBotones,image=self.Iconos[12],width=66, height=66).grid(row=0,column=0)
-        Button(self.MarcoBotones,image=self.Iconos[13],width=66, height=66).grid(row=0,column=1)
-        Button(self.MarcoBotones,image=self.Iconos[14],width=66, height=66).grid(row=0,column=2)
-
-        Button(self.MarcoBotones,image=self.Iconos[15],width=66, height=66).grid(row=1,column=0)
-        Button(self.MarcoBotones,image=self.Iconos[16],width=66, height=66).grid(row=1,column=1)
-        Button(self.MarcoBotones,image=self.Iconos[17],width=66, height=66).grid(row=1,column=2)
-
-        Button(self.MarcoBotones,image=self.Iconos[18],width=66, height=66).grid(row=2,column=0)
-        Button(self.MarcoBotones,image=self.Iconos[19],width=66, height=66).grid(row=2,column=1)
-        Button(self.MarcoBotones,image=self.Iconos[20],width=66, height=66).grid(row=2,column=2)
-
-        Button(self.MarcoBotones,image=self.Iconos[21],width=66, height=66).grid(row=3,column=0)
-        Button(self.MarcoBotones,image=self.Iconos[22],width=66, height=66).grid(row=3,column=1)
-        Button(self.MarcoBotones,image=self.Iconos[23],width=66, height=66).grid(row=3,column=2)
+        Button(self.frBtnDataGrid,image=self.Iconos[1],width=130, height=66).grid(row=1,column=0,columnspan=2)
+        Button(self.frBtnDataGrid,image=self.Iconos[9],width=66, height=66).grid(row=1,column=2)
+        Button(self.frBtnDataGrid,image=self.Iconos[8],width=66, height=66).grid(row=1,column=3)
+        Button(self.frBtnDataGrid,image=self.Iconos[7],width=66, height=66).grid(row=1,column=4)
+        Button(self.frBtnDataGrid,image=self.Iconos[6],width=66, height=66).grid(row=1,column=5)
+    
+       
+        #---- Botones numericos ----
+        self.TecladoNumerico(self.frZonaVentas)
 
         #---- Botones de los Artículos ----
 
-        Button(self.frArticulos,text="Config",image=self.Iconos[5],width=66, height=66).grid(row=0,column=0)
-        Button(self.frArticulos,text="Config",image=self.Iconos[5],width=66, height=66).grid(row=1,column=0)
- 
-        Button(self.frArticulos,text="Config",image=self.Iconos[5],width=66, height=66).grid(row=0,column=1)
-        Button(self.frArticulos,text="Config",image=self.Iconos[5],width=66, height=66).grid(row=1,column=1)
-        Button(self.frArticulos,text="Config",image=self.Iconos[5],width=66, height=66).grid(row=1,column=2)
+        for columnas in range(10):
+            for filas in range(2):
+                Button(self.frArticulos,image=self.Iconos[2+columnas],width=66, height=66).grid(row=filas,column=columnas)
+        
 
+    def TecladoNumerico(self,marco,x=None,y=None):
+        self.MarcoBotones=Frame(marco)
+        self.MarcoBotones.grid(row=0,column=2, sticky="ne")
 
+        Button(self.MarcoBotones,image=self.Iconos[24],width=56, height=56).grid(row=0,column=0)
+        Button(self.MarcoBotones,image=self.Iconos[25],width=56, height=56).grid(row=0,column=1)
+        Button(self.MarcoBotones,image=self.Iconos[26],width=56, height=56).grid(row=0,column=2)
+
+        Button(self.MarcoBotones,image=self.Iconos[27],width=56, height=56).grid(row=1,column=0)
+        Button(self.MarcoBotones,image=self.Iconos[28],width=56, height=56).grid(row=1,column=1)
+        Button(self.MarcoBotones,image=self.Iconos[29],width=56, height=56).grid(row=1,column=2)
+
+        Button(self.MarcoBotones,image=self.Iconos[30],width=56, height=56).grid(row=2,column=0)
+        Button(self.MarcoBotones,image=self.Iconos[31],width=56, height=56).grid(row=2,column=1)
+        Button(self.MarcoBotones,image=self.Iconos[32],width=56, height=56).grid(row=2,column=2)
+
+        Button(self.MarcoBotones,image=self.Iconos[33],width=56, height=56).grid(row=3,column=0)
+        Button(self.MarcoBotones,image=self.Iconos[34],width=56, height=56).grid(row=3,column=1)
+        Button(self.MarcoBotones,image=self.Iconos[35],width=56, height=56).grid(row=3,column=2)
 
     #------------- Cargamos las imagenes y creamos una tupla con ellas.
     def CargarImagenes(self):
@@ -142,9 +145,23 @@ class Aplicacion(Frame):
             PhotoImage(file="./Iconos/nueve.png"),  #[20] Icono del 9
             PhotoImage(file="./Iconos/cero.png"),   #[21] Icono del 0
             PhotoImage(file="./Iconos/okay.png"),   #[22] Icono del OK
-            PhotoImage(file="./Iconos/cero.png")   #[23] Icono del punto
+            PhotoImage(file="./Iconos/cero.png"),   #[23] Icono del punto
+            PhotoImage(file="./Iconos/uno54.png"),    #[24]
+            PhotoImage(file="./Iconos/dos54.png"),    #[25]
+            PhotoImage(file="./Iconos/tres54.png"),   #[26]
+            PhotoImage(file="./Iconos/cuatro54.png"), #[27]
+            PhotoImage(file="./Iconos/cinco54.png"),  #[28]
+            PhotoImage(file="./Iconos/seis54.png"),   #[29]
+            PhotoImage(file="./Iconos/siete54.png"),  #[30]
+            PhotoImage(file="./Iconos/ocho54.png"),   #[31]
+            PhotoImage(file="./Iconos/nueve54.png"),  #[32]
+            PhotoImage(file="./Iconos/cero54.png"),   #[33]
+            PhotoImage(file="./Iconos/okay54.png"),   #[34]
+            PhotoImage(file="./Iconos/punto54.png")   #[35]
+
             ) 
 
+    #-------- Método que controla la destrucción de la aplicación -------
     def Salir(self):
         respuesta=messagebox.askquestion("Salir", "¿Estas seguro que deseas salir?")
         if respuesta=="yes":
@@ -156,6 +173,7 @@ class Aplicacion(Frame):
 
 def mainApp():
     root=Tk()
+    root.geometry("1024x500") #tamaño de la ventana
     App=Aplicacion(principal=root)
     App.mainloop()
     return 0
